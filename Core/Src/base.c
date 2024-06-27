@@ -141,7 +141,7 @@ void USART_protocol_parsing(void)
 			case 'V':
 				if(StringCompare2(VERSION,String_buf)==0)
 					{
-					printf("Burnin Version 1.5\r\n");
+					printf("Burnin Version 1.6\r\n");
 					}
 				else
 					{
@@ -158,11 +158,6 @@ void USART_protocol_parsing(void)
 			  else if(string_compare_len(GET_VAL,String_buf,7)==0)
 					{
 				      int a=0;
-//					  int b,c,sample;
-//					  b=String_buf[8]-'0';
-//					  c=String_buf[9]-'0';						
-//					  sample= a=b*10+c;	
-//					  printf("ADC_Sample:%d\r\n",sample);
                       for(a=0;a<200;a++)
 						{
 							HAL_Delay(100);
@@ -237,9 +232,9 @@ void SET_VAL(void)
     float Read; 						
 	Read=FLASH_Read(0x08008000);
 	White_val=Read/100;	
-   if(White_val>5||White_val<1.5)
+   if(White_val>5||White_val<2.5)
 		{
-		   FLASH_Write(0x08008000,200);
+		   FLASH_Write(0x08008000,250);
 		   Read=FLASH_Read(0x08008000);
 	       White_val=Read/100;	
 		   printf("read value1:%.2f\r\n", White_val);	 
@@ -307,7 +302,7 @@ else
 	voltage_new=voltage;
 	
 //	printf("voltage_new=%.3f\r\n",voltage_new);	
-if(voltage>White_val&&voltage<3.3)                   //ÆÁÄ»°×É«µçÑ¹  0.1S¶ÁÒ»´Î
+if(voltage>White_val&&voltage<3.4)                   //ÆÁÄ»°×É«µçÑ¹  0.1S¶ÁÒ»´Î
 	{	
 		 
 		 Idle_Times=0;
@@ -329,7 +324,7 @@ if(voltage>White_val&&voltage<3.3)                   //ÆÁÄ»°×É«µçÑ¹  0.1S¶ÁÒ»´Î
 		}	
 		printf("*****************W_TIMES=%d\r\n",White_On_Times);		
 	}
-else if(voltage<Black_val)             //ÆÁÄ»ºÚÉ«µçÑ¹
+else if(voltage<Black_val&&voltage>0.2)             //ÆÁÄ»ºÚÉ«µçÑ¹
 		{	
 			White_Times=White_On_Times;
 //			printf("*****************White_Times=%d\r\n",White_Times);	
@@ -365,46 +360,45 @@ else
 
 }
 	
-//ÆÁÄ»°×É«2S£¬ºÚÉ«298S,£¬ÂÌµÆ 20 2980
+//ÆÁÄ»°×É«2S£¬ºÚÉ«118S,£¬ÂÌµÆ 20 1180
 if(Debug_flag==0)
 	{
-		if(6<White_Times&&White_Times<34&&2966<Black_Times&&Black_Times<2994)	 
+//		if(6<White_Times&&White_Times<34&&2966<Black_Times&&Black_Times<2994)	 //6/27ÐÞ¸Ä
+		if(10<White_Times&&White_Times<34&&1170<Black_Times&&Black_Times<1194)	   
 		{
 		  White_Times=0;
 		  Black_Times=0;
-		  Busy_Flag=0;
-//		  Test_Times=0;	  		
+		  Busy_Flag=0;  		
 		  LED_GREEN();	 
 	      printf("Test PASS*****\r\n*_*\r\n");        				
 		}
-//ÆÁÄ»°×É«8S£¬ºÚÉ«292S£¬ºìµÆ	80 2920
-		else if (66<White_Times&&White_Times<94&&2906<Black_Times&&Black_Times<2934)
-	 
+//ÆÁÄ»°×É«6S£¬ºÚÉ«112S£¬ºìµÆ	60 1140
+//		else if (66<White_Times&&White_Times<94&&2906<Black_Times&&Black_Times<2934)   //6/27ÐÞ¸Ä
+		else if (50<White_Times&&White_Times<74&&1130<Black_Times&&Black_Times<1154) 
 		{
 		  White_Times=0;
 		  Black_Times=0;
-		  Busy_Flag=0;
-//		  Test_Times=0;							
+		  Busy_Flag=0;						
 		  LED_RED();
 		  printf("Test FAIL\r\n*_*\r\n");		
 		}
- //ÆÁÄ»°×É«5S£¬ºÚÉ«55S ,»ÆÉ«µÆ 50 550
-		else if (36<White_Times&&White_Times<64&&536<Black_Times&&Black_Times<564)  	 
+ //ÆÁÄ»°×É«2S£¬ºÚÉ«58S ,»ÆÉ«µÆ 20 580
+//		else if (36<White_Times&&White_Times<64&&536<Black_Times&&Black_Times<564)   //6/27ÐÞ¸Ä
+		else if (10<White_Times&&White_Times<34&&570<Black_Times&&Black_Times<594)  			
 		{		 
 			White_Times=0;
 			Black_Times=0;
-			Busy_Flag=0;
-	//		Test_Times=0;	
+			Busy_Flag=0;	
 			LED_Yellow();		
 			printf("Testing\r\n*_*\r\n");		
 		}
- //ÆÁÄ»°×É«3S£¬ºÚÉ«270S ,»ÆÉ«µÆ 30 270	
-	
-		else if (16<White_Times&&White_Times<44&&256<Black_Times&&Black_Times<284)  	 
+ //ÆÁÄ»°×É«2S£¬ºÚÉ«30S ,»ÆÉ«µÆ 20 280	
+//	else if (16<White_Times&&White_Times<44&&256<Black_Times&&Black_Times<284)       //6/27ÐÞ¸Ä
+	else if (10<White_Times&&White_Times<34&&270<Black_Times&&Black_Times<294)  	 
 		{	 
 			reset();		
 			Busy_Flag=2;
-			printf("Detected puck\r\n*_*\r\n");		
+			printf("Detected Puck\r\n*_*\r\n");		
 		}
 //×´Ì¬²»¶Ô		
 		else if(Test_Times==18000) 
@@ -415,7 +409,7 @@ if(Debug_flag==0)
 	} 	
  else
 	{
-    	//ÆÁÄ»°×É«2S£¬ºÚÉ«8S£¬ºìµÆ	
+    	//ÆÁÄ»°×É«2S£¬ºÚÉ«8S£¬ÂÌµÆ	
 	  if(10<White_Times&&White_Times<30&&Black_Times>60&&Black_Times<90)   	 
 		{
 			  White_Times=0;
@@ -434,7 +428,7 @@ if(Debug_flag==0)
 			  LED_RED();
 			  printf("Test FAIL\r\n*_*\r\n");		
 		}
-	 //ÆÁÄ»°×É«5S£¬ºÚÉ«15S ,»ÆÉ«µÆ 
+	 //ÆÁÄ»°×É«5S£¬ºÚÉ«5S ,»ÆÉ«µÆ 
 	else if (36<White_Times&&White_Times<64&&36<Black_Times&&Black_Times<64)  	 
 		{	 
 			White_Times=0;
@@ -443,14 +437,15 @@ if(Debug_flag==0)
 	//		Test_Times=0;	
 			LED_Yellow();		
 			printf("Testing\r\n*_*\r\n");		
-		}		
-	else if (16<White_Times&&White_Times<44&&156<Black_Times&&Black_Times<184)  	 
+		}
+ //ÆÁÄ»°×É«3S£¬ºÚÉ«15S ,»ÆÉ«µÆÉÁË¸ 		
+	else if (16<White_Times&&White_Times<44&&136<Black_Times&&Black_Times<164)  	 
 	{	 
 		 reset();		
 		 Busy_Flag=2;
 		 printf("Detected puck\r\n*_*\r\n");		
     }			
-	//×´Ì¬²»¶Ô		
+//×´Ì¬²»¶Ô 5mins		
 	else if(Test_Times==3000) 
 		{     				
 			reset();		
